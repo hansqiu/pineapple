@@ -4,78 +4,45 @@ import java.awt.Shape;
 import javax.swing.JComponent;
 import javax.swing.ImageIcon;
 
-/** 
- * This class contains the methods pertaining to functionality for the game and 
- * the data for a given configuration and moment of gameplay.
- * 
- */
 
-public class Pit extends JComponent{
-	
-	int marbles;
+public class Pit extends JComponent
+{
+	int stones;
 	int location;
-	Player playa;
+	Player player;
 	BoardLayout layout;
-	
-	/**
-     * Pit class constructor - creates a pit with the given parameters
-     * @param n - the number of marbles to initialize the pit with
-     * @param index - the location of the mancala
-     * @param player - the Player this mancala belongs to
-     * @param sty - a concrete implementation of BoardStyle determining
-     * the shape of the pits to be used in the game
-     */        
-	public Pit (int n, int index, Player player, BoardLayout b)
+	      
+	public Pit (int n, int index, Player currentPlayer, BoardLayout b)
 	{
-		marbles = n;
+		stones = n;
 		location = index;
-		playa = player;
+		player = currentPlayer;
 		layout = b;     
 	}
 	
-	/**
-	 *Get the player the pit belongs to
-	 *@return the pit's player
-	 */
-	public Player getPlayer()
+	public void setStones(int n)
 	{
-		return playa;
-	}
-
-	/**
-	 *Change the number of marbles in the current pit
-	 *@param n number of marbles to be set to
-	 */
-	public void setMarbles(int n)
-	{
-		marbles = n;
+		stones = n;
 	}
 	
-	/**
-	 *Get the number of marbles in the current pit
-	 *@return the pit's marbles
-	 */
-	public int getMarbles()
+	public int getStones()
 	{
-		return marbles;
+		return stones;
 	}
 	
-	/**
-	 *Get the index or location of each pit
-	 *@return the location of each pit
-	 */
 	public int getIndex()
 	{
 		return location;
 	}
 	
-	/**
-	 *Check if the pit is empty or not
-	 *@return true if the pit is empty and false otherwise
-	 */
+	public Player getPlayer()
+	{
+		return player;
+	}
+	
 	public boolean isEmpty()
 	{
-		if(marbles == 0)
+		if(stones == 0)
 		{
 			return true;
 		}
@@ -85,13 +52,6 @@ public class Pit extends JComponent{
 		}
 	}
 	
-
-	
-	/**
-	 *Get the shape of the pit to be drawn
-	 *@param b - the board style determining the shape
-	 *@return the Shape based on the board style
-	 */
 	public String getPitImagePath(BoardLayout b)
 	{
 		return b.getPitPic();
@@ -102,19 +62,14 @@ public class Pit extends JComponent{
 		return b.getStonePic();
 	}
 	
-	/**
-	 *Get the player the pit belongs to
-	 *@param g graphics object used to draw shape
-	 */
 	public void paintComponent(Graphics g)
 	{
         super.paintComponent(g);
 		ImageIcon i = new ImageIcon(this.getPitImagePath(layout));
 		i.paintIcon(this, g, 10, 10);
-//		ImageIcon j = new ImageIcon("D:\\workplace-JAVA\\CS151FinalProject3\\image\\WoodStone.png");
 		ImageIcon j = new ImageIcon(this.getStoneImagePath(layout));
 		int height = -30;
-		for(int k = 0; k < marbles; k++)
+		for(int k = 0; k < stones; k++)
 		{
 			j.paintIcon(this, g, 10, height);
 			height = height + 15;

@@ -2,8 +2,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
 import java.awt.GridLayout;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public class MancalaTester
 {
@@ -20,14 +22,27 @@ public class MancalaTester
 		mainFrame = new JFrame("CS 151 Team Pineapple Spring 2018");
 
 		mainPanel = new JPanel();
-		mainPanel.setLayout(new GridLayout(2,2,2,2));
+		mainPanel.setLayout(new GridLayout(2,2,10,10));
 
+		Border raisedBevel = BorderFactory.createRaisedBevelBorder();
+		Border loweredBevel = BorderFactory.createLoweredBevelBorder();
+		Border compoundOne = BorderFactory.createCompoundBorder(raisedBevel, loweredBevel);
+		
 		threeWood = new JButton("Wood Theme with 3 stones");
+		threeWood.setBorder(compoundOne);
+		threeWood.setBackground(Color.yellow);
 		fourWood = new JButton("Wood Theme with 4 stones");
+		fourWood.setBorder(compoundOne);
+		fourWood.setBackground(Color.yellow);
+		
 
-
+		Border compoundTwo = BorderFactory.createCompoundBorder(loweredBevel, raisedBevel);
 		threeGalaxy = new JButton("Galaxy Theme with 3 stones");
+		threeGalaxy.setBorder(compoundTwo);
+		threeGalaxy.setBackground(Color.DARK_GRAY);
 		fourGalaxy = new JButton("Galaxy Theme with 4 stones");
+		fourGalaxy.setBorder(compoundTwo);
+		fourGalaxy.setBackground(Color.DARK_GRAY);
 
 		mainPanel.add(threeWood);
 		mainPanel.add(fourWood);
@@ -47,7 +62,6 @@ public class MancalaTester
 	
 	static class chooseOne implements ActionListener
 	{
-
 		public void actionPerformed (ActionEvent e)
 		{
 			mainFrame.setVisible(false);
@@ -55,50 +69,46 @@ public class MancalaTester
 			GalaxyLayout gl = new GalaxyLayout();
 			threeWood.addMouseListener(new MouseAdapter() 
 			{
-				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
+					super.mouseClicked(e); 
 					Board b = new Board(wl);
 					BoardView bV=new BoardView(b);
-					b.addChangeListener(bV);
-					b.fillBoard(3);
+					b.attach(bV);
+					b.setBoard(3);
 				};
 			});
 			fourWood.addMouseListener(new MouseAdapter() 
 			{
-				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
+					super.mouseClicked(e); 
 					Board b = new Board(wl);
 					BoardView bV=new BoardView(b);
-					b.addChangeListener(bV);
-					b.fillBoard(4);
+					b.attach(bV);
+					b.setBoard(4);
 				};
 			});
 			threeGalaxy.addMouseListener(new MouseAdapter() 
 			{
-				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
+					super.mouseClicked(e);
 					Board b = new Board(gl);
 					BoardView bV=new BoardView(b);
-					b.addChangeListener(bV);
-					b.fillBoard(3);
+					b.attach(bV);
+					b.setBoard(3);
 				};
 			});
 			fourGalaxy.addMouseListener(new MouseAdapter() 
 			{
-				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
+					super.mouseClicked(e); 
 					Board b = new Board(gl);
 					BoardView bV=new BoardView(b);
-					b.addChangeListener(bV);
-					b.fillBoard(4);
+					b.attach(bV);
+					b.setBoard(4);
 				};
 			});
 		}

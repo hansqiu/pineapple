@@ -9,52 +9,48 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-/** 
- * This class contains the methods pertaining to display for the game and 
- * the data for a given configuration and moment of gameplay.
- * 
- */
 
-public class BoardView implements ChangeListener {
+public class BoardView implements ChangeListener 
+{
 	private final Board board;
 	private ArrayList<Pit> pits;
 	final JTextField playerTurn;
 	
-	/**
-     * BoardView class constructor - creates a display based on the current board
-     * @param b - the board object to reference when updating this view.  
-     */
-	public BoardView(Board b) {
+	public BoardView(Board b) 
+	{
 		board = b;
 		pits = b.getData();
 		JFrame frame = new JFrame("Mancala");
 		frame.setSize(1200, 600);
 		JButton undoButton = new JButton("Undo");
-		undoButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		undoButton.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
 				board.undo();
 			}
 		});
 		final  JPanel grid= new JPanel(new GridLayout(0,8));
 		grid.add(b.getMancala(Player.TWO));
-		for(int i=0;i<6;i++){
+		for(int i=0;i<6;i++)
+		{
 			JPanel ingrid = new JPanel(new GridLayout(2,0));
 			final Pit toppit = pits.get(12-i);
 			final Pit botpit = pits.get(i);
-			ingrid.add(toppit);//or some other empty component
+			ingrid.add(toppit);
 			ingrid.add(botpit);
-			toppit.addMouseListener(new MouseAdapter() {
+			toppit.addMouseListener(new MouseAdapter() 
+			{
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
+					super.mouseClicked(e);
 					board.choosePit(toppit);
 				}
 			});
 			botpit.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
+					super.mouseClicked(e);
 					board.choosePit(botpit);
 				}
 			});
@@ -70,26 +66,26 @@ public class BoardView implements ChangeListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	
-	/**
-     * Repaints when the state of the board is changed
-     * @param e - a change event
-     */
-	public void stateChanged(ChangeEvent e) {
-		pits=board.getData();
-		for (Pit pit:pits){
-			pit.repaint();
+	public void stateChanged(ChangeEvent e) 
+	{
+		pits = board.getData();
+		for (Pit p:pits)
+		{
+			p.repaint();
 		}
+		
 		playerTurn.setText("Now is player " + board.getPlayer().toString() + "'s turn");
-		if(board.gameOver()){
-			String score = "Final score: Player One "+pits.get(6).getMarbles();
-			score+=", Player Two "+pits.get(13).getMarbles()+ ". ";
-			if(pits.get(6).getMarbles()>pits.get(13).getMarbles())
-				playerTurn.setText(score+"Player One Wins!");
-			else if(pits.get(6).getMarbles()<pits.get(13).getMarbles())
-				playerTurn.setText(score+"Player Two Wins!");
+		
+		if(board.gameOver())
+		{
+			String score = "Final score: Player One "+pits.get(6).getStones();
+			score += ", Player Two "+pits.get(13).getStones()+ ". ";
+			if(pits.get(6).getStones()>pits.get(13).getStones())
+				playerTurn.setText(score + "Player One Wins!");
+			else if(pits.get(6).getStones()<pits.get(13).getStones())
+				playerTurn.setText(score + "Player Two Wins!");
 			else
-				playerTurn.setText(score+"Draw!");
+				playerTurn.setText(score + "Draw!");
 		}
 	}
 }
