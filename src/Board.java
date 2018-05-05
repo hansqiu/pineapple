@@ -1,7 +1,5 @@
 import java.util.ArrayList;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.*;
 
 /** 
  * This class contains the methods pertaining to functionality for the game and 
@@ -11,52 +9,59 @@ import javax.swing.event.ChangeListener;
 public class Board {
 
 	private Player p;
-	private boolean extraTurn;
-	private ArrayList<ChangeListener> listeners;
-	private int countUndo;
-	private int[] previousState;
-	private ArrayList<Pit> pits;  
-	private boolean redo;
 
-        /**
-         * Board class constructor - creates a starting board initializing 
-         * empty "pits" or containers with no marbles.
-         * @param aBoardStyle - a concrete implementation of BoardStyle determining
-         * the shape of the pits to be used in the game
-         */
+	private boolean turn;
+	private boolean freeTurn;
+	private boolean changeBack;
+
+	private CircularList<Pit> pits; 
+	private ArrayList<ChangeListener> listeners;
+
+	private int undoCounter;
+	private int[] previousTurn;
+
+	private final int MAX_UNDOS = 3;
+
+	/**
+	 * Board class constructor - creates a starting board initializing 
+	 * empty "pits" or containers with no marbles.
+	 * @param aBoardStyle - a concrete implementation of BoardStyle determining
+	 * the shape of the pits to be used in the game
+	 */
 	public Board(BoardStyle aBoardStyle) {
-		redo = false;
-		countUndo=0;
-		previousState = new int[14];
-		p = Player.ONE;
-		extraTurn = false;
-		pits = new ArrayList<Pit>();
+		changeBack = false;
+		turn = false;
+		undoCounter=0;
+		previousTurn = new int[14];
+		p = Player.A;
+		freeTurn = false;
+		pits = new CircularList<Pit>();
 		for (int i = 0; i < 6; i++) {
-			pits.add(new Pit(0, i, Player.ONE, aBoardStyle));
+			pits.add(new Pit(0, i, Player.A, aBoardStyle));
 		}
-		pits.add(new Mancala(0, 6, Player.ONE, aBoardStyle));
+		pits.add(new Mancala(0, 6, Player.A, aBoardStyle));
 		for (int i = 7; i < 13; i++) {
-			pits.add(new Pit(0, i, Player.TWO, aBoardStyle));
+			pits.add(new Pit(0, i, Player.B, aBoardStyle));
 		}
-		pits.add(new Mancala(0, 13, Player.TWO, aBoardStyle));
+		pits.add(new Mancala(0, 13, Player.B, aBoardStyle));
 
 		listeners = new ArrayList<ChangeListener>();
 	}
-        
-        /**
-         * Populates board with given marbles for new game
-         * @param marbles - the number of marbles per pit.
-         */
-	
-	public void fillBoard(int marbles) {
+
+	/**
+	 * Populates board with given marbles for new game
+	 * @param marbles - the number of marbles per pit.
+	 */
+
+	public void gameSetup(int marbles) {
 		int counter = 0;
 		for (Pit p : pits) {
 			if (!(p instanceof Mancala)) {
-				p.setMarbles(marbles);
-				previousState[counter] = marbles;
+				p.setStones(marbles);
+				previousTurn[counter] = marbles;
 			}  
 			else {
-				previousState[counter] = 0;
+				previousTurn[counter] = 0;
 				counter++;
 			}
 		}
@@ -65,46 +70,76 @@ public class Board {
 			listener.stateChanged(event);
 		}
 	}
-        
-        /**
-         * Attaches listeners to the collection of listeners for this model
-         * @param listener - ChangeListeners to be notified of changes to the model
-         */
+
+	/**
+	 * Attaches listeners to the collection of listeners for this model
+	 * @param listener - ChangeListeners to be notified of changes to the model
+	 */
 	public void addChangeListener(ChangeListener listener) {
 		listeners.add(listener);
 	}
-        
-        /**
-         * Returns the current player.
-         * @return - a player, Player.ONE or Player.TWO
-         */
+
+	/**
+	 * Returns the current player.
+	 * @return - a player, Player.A or Player.B
+	 */
 	public Player getPlayer() {
 		return p;
 	}
-        
-        /**
-         * Evaluates and returns the game status
-         * @return - a boolean to signal the end of the game.
-         */
-	public boolean getGameStatus() {
 
-		return gameOver();
+	public boolean validateMove(int pitIndex){
+		if(pitIndex < 6 && turn == false){
+			return true;
+		}
+
+		if(pitIndex > 6 && turn == true){
+			return true;
+		}
+		return false;
 	}
-        
-        /**
-         * Determines the position of the pit of the last marble dropped on the 
-         * board for the selected pit.
-         * @param pit - a pit object containing the count of marbles to distribute
-         * @return the pit index in the board's array of pits that the last marble
-         * lands in
-         */
+
+	/**
+	 * Distributes marbles of the pit chosen by the player around the pits 
+	 * on the board beginning with the pit after the chosen pit.
+	 * @param startIndex - the starting index to begin distributing marbles
+	 * @param marbles - the number of marbles to distribute
+	 */
+	public void moveStones(int startIndex, int marbles) {
+		int numStones = marbles;
+		int currentIndex = startIndex;
+
+		while (numStones > 0) {
+			if(validateMove(startIndex)){
+				if (currentIndex == 5 && p == Player.B) {
+					currentIndex += 2;
+				} else if (currentIndex == 12 && p == Player.A) {
+					currentIndex = 0;
+				} else {
+					currentIndex++;
+				}
+				if (currentIndex == 14) {
+					currentIndex = 0;
+				}
+				pits.get(currentIndex).setStones(pits.get(currentIndex).getStones() + 1);
+				numStones--;
+			}
+		}
+	}
+
+	/**
+	 * Determines the position of the pit of the last marble dropped on the 
+	 * board for the selected pit.
+	 * @param pit - a pit object containing the count of marbles to distribute
+	 * @return the pit index in the board's array of pits that the last marble
+	 * lands in
+	 */
 	public int getLastMarble(Pit pit) {
-		int numberOfMarbles = pit.getMarbles();
+		int numStones = pit.getStones();
 		int currentIndex = pit.getIndex();
-		while (numberOfMarbles > 0) {
-			if (currentIndex == 5 && p == Player.TWO) {
+		while (numStones > 0) {
+			if (currentIndex == 5 && p == Player.B) {
 				currentIndex += 2;
-			} else if (currentIndex == 12 && p == Player.ONE) {
+			} else if (currentIndex == 12 && p == Player.A) {
 				currentIndex += 2;
 			} else {
 				currentIndex++;
@@ -112,124 +147,98 @@ public class Board {
 			if (currentIndex == 14) {
 				currentIndex = 0;
 			}
-			numberOfMarbles--;
+			numStones--;
 		}
 		return currentIndex;
 	}
 
-        /**
-         * Distributes marbles of the pit chosen by the player around the pits 
-         * on the board beginning with the pit after the chosen pit.
-         * @param startIndex - the starting index to begin distributing marbles
-         * @param marbles - the number of marbles to distribute
-         */
-	public void distributeMarbles(int startIndex, int marbles) {
-		int numberOfMarbles = marbles;
-		int currentIndex = startIndex;
-
-		while (numberOfMarbles > 0) {
-			if (currentIndex == 5 && p == Player.TWO) {
-				currentIndex += 2;
-			} else if (currentIndex == 12 && p == Player.ONE) {
-				currentIndex = 0;
-			} else {
-				currentIndex++;
-			}
-			if (currentIndex == 14) {
-				currentIndex = 0;
-			}
-			pits.get(currentIndex).setMarbles(pits.get(currentIndex).getMarbles() + 1);
-			numberOfMarbles--;
-		}
-	}
-
-        /**
-         * Checks to see if conditions have been met where the player wins 
-         * marbles from the other player depending on the location 
-         * where the last pit dropped on the board. The last pit must be empty 
-         * and on the current player's side.
-         * @param lastMarbleDropped - the index of the pit where the last marble
-         * dropped.
-         */
-	private void wonOpponentMarbles(int lastMarbleDropped) {
+	/**
+	 * Checks to see if conditions have been met where the player wins 
+	 * marbles from the other player depending on the location 
+	 * where the last pit dropped on the board. The last pit must be empty 
+	 * and on the current player's side.
+	 * @param lastStone - the index of the pit where the last marble
+	 * dropped.
+	 */
+	private void takeOppositeStones(int lastStone) {
 		int mancala=6;
-		if(lastMarbleDropped==6 || lastMarbleDropped==13)return;
-		else if (pits.get(lastMarbleDropped).getMarbles() == 1 && pits.get(lastMarbleDropped).getPlayer() == p) {
-			if(pits.get(12-lastMarbleDropped).getMarbles()==0)return;
-			if(p==Player.ONE)mancala=6;
+		if(lastStone==6 || lastStone==13)return;
+		else if (pits.get(lastStone).getStones() == 1 && pits.get(lastStone).getPlayer() == p) {
+			if(pits.get(12-lastStone).getStones()==0)return;
+			if(p==Player.A)mancala=6;
 			else mancala=13;
 
-			pits.get(mancala).setMarbles(pits.get(mancala).getMarbles() + pits.get(12 - lastMarbleDropped).getMarbles());
-			pits.get(mancala).setMarbles(pits.get(mancala).getMarbles() + pits.get(lastMarbleDropped).getMarbles());
-			pits.get(12 - lastMarbleDropped).setMarbles(0);
-			pits.get(lastMarbleDropped).setMarbles(0);
+			pits.get(mancala).setStones(pits.get(mancala).getStones() + pits.get(12 - lastStone).getStones());
+			pits.get(mancala).setStones(pits.get(mancala).getStones() + pits.get(lastStone).getStones());
+			pits.get(12 - lastStone).setStones(0);
+			pits.get(lastStone).setStones(0);
 		} 
 	}
 
-        /**
-         * Begins the sequence of actions after a player chooses a particular
-         * pit on the board.
-         * @param pit - the chosen pit by the player.
-         */
+	/**
+	 * Begins the sequence of actions after a player chooses a particular
+	 * pit on the board.
+	 * @param pit - the chosen pit by the player.
+	 */
 	public void choosePit(Pit pit) {
-		if(!redo)
-			countUndo=0;
+		if(!changeBack)
+			undoCounter=0;
 		if(pit.getPlayer()!=p)
 			return;
-		if(pit.getMarbles()==0)
+		if(pit.getStones()==0)
 			return;
 		for (Pit pitt : pits) {
-			previousState[pitt.getIndex()] = pitt.getMarbles();
+			previousTurn[pitt.getIndex()] = pitt.getStones();
 		}
 
-		extraTurn = getExtraTurn(pit);
-		int lastMarbleDropped = getLastMarble(pit);
-		int numberOfMarbles = pit.getMarbles();
-		pit.setMarbles(0);
+		freeTurn = getFreeTurn(pit);
+		int lastStone = getLastMarble(pit);
+		int numStones = pit.getStones();
+		pit.setStones(0);
 
-		distributeMarbles(pit.getIndex(), numberOfMarbles);
-		wonOpponentMarbles(lastMarbleDropped);
-		if (gameOver()) 
-			clearBoard();
-		if (!extraTurn) {
-			switchPlayer();
-		}
-		redo=false;
+		moveStones(pit.getIndex(), numStones);
+		takeOppositeStones(lastStone);
+		if (endGame()) 
+
+			if (!freeTurn) {
+				switchPlayer();
+			}
+		changeBack=false;
 		ChangeEvent event = new ChangeEvent(this);
 		for (ChangeListener listener : listeners) {
 			listener.stateChanged(event);
 		}
 	}
-        
-        /**
-         * Executes a check to see if the current player gets an extra turn
-         * depending on the condition where the last marble dropped from the 
-         * chosen pit by the player is the player's mancala.
-         * @param pit - the pit chosen by the player
-         * @return - a boolean determining whether or not the player receives
-         * an extra turn
-         */
-	private boolean getExtraTurn(Pit pit) {
-		int totalMoves = pit.getIndex() + pit.getMarbles();
-		if ((totalMoves - 6) % 13 == 0 && p == Player.ONE) 
+
+	/**
+	 * Executes a check to see if the current player gets an extra turn
+	 * depending on the condition where the last marble dropped from the 
+	 * chosen pit by the player is the player's mancala.
+	 * @param pit - the pit chosen by the player
+	 * @return - a boolean determining whether or not the player receives
+	 * an extra turn
+	 */
+	private boolean getFreeTurn(Pit pit) {
+		int totalMoves = pit.getIndex() + pit.getStones();
+		if ((totalMoves - 6) % 13 == 0 && p == Player.A) 
 		{
 			return true;
 		}
-		if ((totalMoves - 13) % 13 == 0 && p == Player.TWO) {
+		if ((totalMoves - 13) % 13 == 0 && p == Player.B) {
 			return true;
 		}
 		return false;
 	}
-        
-        /**
-         * Checks to see if conditions have been met to end the game -- the game
-         * ends if any player's set of pits are empty.
-         * @return a boolean determining if game end conditions are satisfied
-         */
-	public boolean gameOver() {
+
+	/**
+	 * Checks to see if conditions have been met to end the game -- the game
+	 * ends if any player's set of pits are empty.
+	 * @return a boolean determining if game end conditions are satisfied
+	 */
+	public boolean endGame() {
 		boolean emptyRow = true;
 		for (int i = 0; i < 6; i++) {
-			if (pits.get(i).getMarbles() != 0) {
+			if (pits.get(i).getStones() != 0) {
 				emptyRow = false;
 			}
 		}
@@ -240,7 +249,7 @@ public class Board {
 		emptyRow = true;
 
 		for (int i = 7; i < 13; i++) {
-			if (pits.get(i).getMarbles() != 0) {
+			if (pits.get(i).getStones() != 0) {
 				emptyRow = false;
 			}
 		}
@@ -248,24 +257,24 @@ public class Board {
 		return emptyRow;
 	}
 
-        /**
-         * Checks if an undo action is valid and performs an undo function 
-         * where the previous state of the gameplay is restored.
-         */
+	/**
+	 * Checks if an undo action is valid and performs an undo function 
+	 * where the previous state of the gameplay is restored.
+	 */
 	public void undo() {
 
-		if (!canUndo()) {
+		if (!validateUndo()) {
 			System.out.println("You are not allowed to Undo");
 			return;
 		}
 
-		redo = true;
+		changeBack = true;
 
-		countUndo++;
-		for (Pit pat : pits) 
-			pat.setMarbles(previousState[pat.getIndex()]);
+		undoCounter++;
+		for (Pit p : pits) 
+			p.setStones(previousTurn[p.getIndex()]);
 
-		if(!extraTurn)
+		if(!freeTurn)
 			switchPlayer();
 
 
@@ -275,67 +284,65 @@ public class Board {
 		}
 	}
 
-        /**
-         * Gets the ArrayList containing the pits.
-         * @return an arraylist of Pits.
-         */
-	public ArrayList<Pit> getData() {
+	/**
+	 * Gets the ArrayList containing the pits.
+	 * @return an arraylist of Pits.
+	 */
+	public CircularList<Pit> getData() {
 		return pits;
 	}
 
-        /**
-         * Gets the mancala of a given player
-         * @param player - the player to whom the mancala belongs
-         * @return - the mancala object belonging to the player.
-         */
+	/**
+	 * Gets the mancala of a given player
+	 * @param player - the player to whom the mancala belongs
+	 * @return - the mancala object belonging to the player.
+	 */
 	public Mancala getMancala(Player player) {
-		for (Pit pat : pits) {
-			if (pat.getPlayer() == player && pat instanceof Mancala) {
-				return (Mancala) pat;
+		for (Pit p : pits) {
+			if (p.getPlayer() == player && p instanceof Mancala) {
+				return (Mancala) p;
 			}
 		}
 		return null;
 	}
 
-        /**
-         * Switches the player status between Player.ONE and Player.TWO
-         */
+	/**
+	 * Switches the player status between Player.A and Player.B
+	 */
 	private void switchPlayer() {
-		if (p == Player.ONE) {
-			p = Player.TWO;
-		} else {
-			p = Player.ONE;
+		if (p == Player.A) {
+			p = Player.B;
+		} 
+		else {
+			p = Player.A;
 		}
-		extraTurn = false;
+		freeTurn = false;
 	}
 
-        /**
-         * Checks to see if a previous state exists for the current snapshot
-         * of the distribution of marbles
-         * @return a boolean determining if the previous state exists.
-         */
-	private boolean noPreviousState(){
-		for(Pit pat: pits)
-			if(pat.getMarbles()!=previousState[pat.getIndex()])
+	/**
+	 * Checks to see if a previous state exists for the current snapshot
+	 * of the distribution of marbles
+	 * @return a boolean determining if the previous state exists.
+	 */
+	private boolean checkPreviousTurn(){
+		for(Pit p: pits)
+			if(p.getStones()!=previousTurn[p.getIndex()])
 				return false;
 		return true;
 	}
-        
-        /**
-         * Checks the allowable conditions for a player to undo an action.
-         * @return a boolean, true if the player can undo, false if not.
-         */
-	private boolean canUndo(){
-		if(gameOver())
-			return false;
 
-		if(noPreviousState()){
+	/**
+	 * Checks the allowable conditions for a player to undo an action.
+	 * @return a boolean, true if the player can undo, false if not.
+	 */
+	private boolean validateUndo(){
+
+		if(checkPreviousTurn()){
 			System.out.println("no previous state");
 			return false;
-
 		}
 
-		if(countUndo==3){
+		if(undoCounter == MAX_UNDOS){
 			System.out.println("you are not allowed any more attempts");
 			return false;
 		}
@@ -344,17 +351,12 @@ public class Board {
 
 	}
 
-        /**
-         * Clears the pits on the board to be zero
-         */
-	private void clearBoard(){
-		for (int i = 0; i < 6; i++) {
-			pits.get(6).setMarbles(pits.get(6).getMarbles() + pits.get(i).getMarbles());
-			pits.get(i).setMarbles(0);
-		}
-		for (int i = 7; i < 13; i++) {
-			pits.get(13).setMarbles(pits.get(13).getMarbles() + pits.get(i).getMarbles());
-			pits.get(i).setMarbles(0);
-		}
+	/**
+	 * Evaluates and returns the game status
+	 * @return - a boolean to signal the end of the game.
+	 */
+	public boolean getGameStatus() {
+
+		return endGame();
 	}
 }
