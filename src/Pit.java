@@ -1,6 +1,4 @@
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Shape;
+import java.awt.*;
 import javax.swing.JComponent;
 
 /** 
@@ -11,25 +9,25 @@ import javax.swing.JComponent;
 
 public class Pit extends JComponent{
 	
-	int marbles;
-	int location;
-	Player playa;
+	int stones;
+	int index;
+	Player player;
 	BoardStyle style;
 	
 	/**
      * Pit class constructor - creates a pit with the given parameters
-     * @param n - the number of marbles to initialize the pit with
-     * @param index - the location of the mancala
+     * @param n - the number of stones to initialize the pit with
+     * @param pit - the index of the mancala
      * @param player - the Player this mancala belongs to
-     * @param sty - a concrete implementation of BoardStyle determining
+     * @param style - a concrete implementation of BoardStyle determining
      * the shape of the pits to be used in the game
      */        
-	public Pit (int n, int index, Player player, BoardStyle sty)
+	public Pit (int n, int pit, Player play, BoardStyle aStyle)
 	{
-		marbles = n;
-		location = index;
-		playa = player;
-		style = sty;     
+		stones = n;
+		index = pit;
+		player = play;
+		style = aStyle;     
 	}
 	
 	/**
@@ -38,34 +36,25 @@ public class Pit extends JComponent{
 	 */
 	public Player getPlayer()
 	{
-		return playa;
+		return player;
 	}
 
 	/**
-	 *Change the number of marbles in the current pit
-	 *@param n number of marbles to be set to
+	 *Change the number of stones in the current pit
+	 *@param n number of stones to be set to
 	 */
-	public void setMarbles(int n)
+	public void setStones(int n)
 	{
-		marbles = n;
+		stones = n;
 	}
 	
 	/**
-	 *Get the number of marbles in the current pit
-	 *@return the pit's marbles
+	 *Get the number of stones in the current pit
+	 *@return the pit's stones
 	 */
-	public int getMarbles()
+	public int getStones()
 	{
-		return marbles;
-	}
-	
-	/**
-	 *Get the index or location of each pit
-	 *@return the location of each pit
-	 */
-	public int getIndex()
-	{
-		return location;
+		return stones;
 	}
 	
 	/**
@@ -74,14 +63,20 @@ public class Pit extends JComponent{
 	 */
 	public boolean isEmpty()
 	{
-		if(marbles == 0)
+		if(getStones() == 0)
 		{
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
+	}
+	
+	/**
+	 *Get the pit or index of each pit
+	 *@return the index of each pit
+	 */
+	public int getIndex()
+	{
+		return index;
 	}
 	
 	/**
@@ -118,17 +113,17 @@ public class Pit extends JComponent{
 		int y = 0;
 		int row = shapeHeight/2-5;
 		int x = 0;
-		for(int i = 0; i< getMarbles(); i++)
+		for(int i = 0; i< getStones(); i++)
 		{
 			
 			if( y< shapeHeight)
 			{
 				g2.drawOval(col,y, 10,10);
-				y+= 10;				
+				y = y + 10;				
 			}
 			else{
 			g2.drawOval(x,row, 10,10);
-			x += 10;
+			x = x + 10;
 			}
 		}
 	}
