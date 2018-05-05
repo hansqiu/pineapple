@@ -5,5 +5,5 @@
  */
 
 public enum Player{
-    ONE, TWO
+    A,B
 }
