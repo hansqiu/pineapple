@@ -35,7 +35,7 @@ public class GameView implements ChangeListener
 		board = b;
 		pits = b.getPitList();
 		JFrame frame = new JFrame("CS 151 Team Pineapple Spring 2018 Mancala Game");
-		frame.setSize(1000, 500);
+		frame.setSize(1200, 500);
 		JButton undoButton = new JButton("Undo");
 		undoButton.setPreferredSize(new Dimension(30,40));
 		undoButton.setBorder(new LineBorder(Color.red, 4));
@@ -77,7 +77,7 @@ public class GameView implements ChangeListener
 			lowerPit.addMouseListener(new MouseAdapter() 
 			{
 				/**
-				* @param e is sthe mouse event
+				* @param e is the mouse event
 				* checks if mouse clicks on pits of player A
 				*/
 				public void mouseClicked(MouseEvent e) 
@@ -96,6 +96,11 @@ public class GameView implements ChangeListener
 		
 		frame.add(undoButton, BorderLayout.SOUTH);
 		
+		JTextField mancalaA = new JTextField("Mancala A");
+		JTextField mancalaB = new JTextField("Mancala B");
+		
+		frame.add(mancalaA, BorderLayout.EAST);
+		frame.add(mancalaB, BorderLayout.WEST);
 		frame.add(panel, BorderLayout.CENTER);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
