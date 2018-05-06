@@ -24,7 +24,7 @@ public class MancalaTest
 
 	public static void main(String[] args)
 	{
-		mainFrame = new JFrame("CS 151 Team Pineapple Spring 2018");
+		mainFrame = new JFrame("CS 151 Team Pineapple Spring 2018 Mancala Game");
 
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(2,2,2,2));
