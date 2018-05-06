@@ -1,5 +1,5 @@
 /**
- * A concrete class implementing wood theme for BoardLayout interface 
+ * Tester class for our mancala board game
  * @author Team Pineapple
  * CS 151 Spring 2018
  */
@@ -21,7 +21,10 @@ public class MancalaTest
 	static JButton threeGalaxy;
 	static JButton fourGalaxy;
 	static JFrame mainFrame;
-
+	
+	/**
+	* main method that displays the game 
+	*/
 	public static void main(String[] args)
 	{
 		mainFrame = new JFrame("CS 151 Team Pineapple Spring 2018 Mancala Game");
@@ -64,9 +67,16 @@ public class MancalaTest
 		fourGalaxy.addActionListener(new chooseOne());
 	}
 	
+	/**
+	* when user chooses a theme and the number of stones for each pit, 
+	* this will display the choices that they made
+	*/
 	static class chooseOne implements ActionListener
 	{
 
+		/**
+		* checks which style to create
+		*/
 		public void actionPerformed (ActionEvent e)
 		{
 			mainFrame.setVisible(false);
@@ -75,6 +85,10 @@ public class MancalaTest
 			
 			threeWood.addMouseListener(new MouseAdapter() 
 			{
+				/**
+				* when mouse is clicked, this will create a new game model
+				* with the corresponding forest style with 3 stones
+				*/
 				public void mouseClicked(MouseEvent e) 
 				{
 					super.mouseClicked(e); 
@@ -86,6 +100,10 @@ public class MancalaTest
 			});
 			fourWood.addMouseListener(new MouseAdapter() 
 			{
+				/**
+				* when mouse is clicked, this will create a new game model
+				* with the corresponding forest style with 4 stones
+				*/
 				public void mouseClicked(MouseEvent e) 
 				{
 					super.mouseClicked(e); 
@@ -97,6 +115,10 @@ public class MancalaTest
 			});
 			threeGalaxy.addMouseListener(new MouseAdapter() 
 			{
+				/**
+				* when mouse is clicked, this will create a new game model
+				* with the corresponding galaxy style with 3 stones
+				*/
 				public void mouseClicked(MouseEvent e) 
 				{
 					super.mouseClicked(e);
@@ -108,6 +130,10 @@ public class MancalaTest
 			});
 			fourGalaxy.addMouseListener(new MouseAdapter() 
 			{
+				/**
+				* when mouse is clicked, this will create a new game model
+				* with the corresponding galaxy style with 4 stones
+				*/
 				public void mouseClicked(MouseEvent e) 
 				{
 					super.mouseClicked(e); 
