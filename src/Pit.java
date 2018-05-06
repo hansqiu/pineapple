@@ -1,6 +1,11 @@
+/**
+ * A class regarding pit of Mancala Board Game
+ * @author Team Pineapple
+ * CS 151 Spring 2018
+ */
+
 import java.awt.Graphics;
 import java.util.Random;
-
 import javax.swing.JComponent;
 import javax.swing.ImageIcon;
 

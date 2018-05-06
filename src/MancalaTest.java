@@ -1,3 +1,9 @@
+/**
+ * A concrete class implementing wood theme for BoardLayout interface 
+ * @author Team Pineapple
+ * CS 151 Spring 2018
+ */
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,7 +24,6 @@ public class MancalaTest
 
 	public static void main(String[] args)
 	{
-
 		mainFrame = new JFrame("CS 151 Team Pineapple Spring 2018");
 
 		mainPanel = new JPanel();

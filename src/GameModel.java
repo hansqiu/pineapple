@@ -1,3 +1,9 @@
+/**
+ * Model part of MVC architecture for Mancala Project 
+ * @author Team Pineapple
+ * CS 151 Spring 2018
+ */
+
 import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -12,16 +18,24 @@ public class GameModel
 	private int numOfUndo;
 	private int[] previousNumOfStone;
 	private ArrayList<ChangeListener> listeners;
-	
+
+	/*
+	 * Constructor of GameModel Object
+	 * GameModel object will use a GameStyle object which will have the info about the style users have chosen as an input.
+	 */
     public GameModel(GameStyle theGameStyle) 
     {
     	currentPlayer = Player.A;
     	pitList = new ArrayList<Pit>();
-		for (int i = 0; i < 6; i++) {
+		
+    	for (int i = 0; i < 6; i++) 
+		{
 			pitList.add(new Pit(0, i, Player.A, theGameStyle));
 		}
 		pitList.add(new Mancala(0, 6, Player.A, theGameStyle));
-		for (int i = 7; i < 13; i++) {
+		
+		for (int i = 7; i < 13; i++) 
+		{
 			pitList.add(new Pit(0, i, Player.B, theGameStyle));
 		}
 		pitList.add(new Mancala(0, 13, Player.B, theGameStyle));
@@ -33,6 +47,9 @@ public class GameModel
 		previousNumOfStone = new int[14];
 	}
         
+    /*
+     * To initialize pits with the chosen number of stones
+     */
 	public void initialize(int stones) 
 	{
 		int counter = 0;
@@ -56,12 +73,16 @@ public class GameModel
 	{
 		if(!canUndo)
 			numOfUndo=0;
+		
 		if(pit.getPlayer() != currentPlayer)
 			return;
+		
 		if(pit.getNumOfStones() == 0)
 			return;
-		for (Pit pitt : pitList) {
-			previousNumOfStone[pitt.getIndex()] = pitt.getNumOfStones();
+		
+		for (Pit p : pitList) 
+		{
+			previousNumOfStone[p.getIndex()] = p.getNumOfStones();
 		}
 
 		extraTurn = getExtraTurn(pit);
@@ -71,11 +92,13 @@ public class GameModel
 
 		distributeStones(pit.getIndex(), numberOfStones);
 		wonOpponentStones(lastStoneDropped);
+		
+		if (!extraTurn) 
+			switchPlayer();
+		
 		if (gameIsOver()) 
 			clearBoard();
-		if (!extraTurn) {
-			switchPlayer();
-		}
+	
 		canUndo = false;
 		notifyChangeListeners();
 	}
@@ -85,16 +108,19 @@ public class GameModel
 		int numberOfStones = stones;
 		int currentIndex = startIndex;
 
-		while (numberOfStones > 0) {
+		while (numberOfStones > 0) 
+		{
 			if (currentIndex == 5 && currentPlayer == Player.B) 
 			{
 				currentIndex += 2;
 			} else if (currentIndex == 12 && currentPlayer == Player.A) 
 			{
 				currentIndex = 0;
-			} else {
+			} else 
+			{
 				currentIndex++;
 			}
+			
 			if (currentIndex == 14) 
 			{
 				currentIndex = 0;

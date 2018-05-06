@@ -1,3 +1,9 @@
+/**
+ * A class regarding mancala of Mancala Board Game
+ * @author Team Pineapple
+ * CS 151 Spring 2018
+ */
+
 import java.awt.Graphics;
 
 import javax.swing.ImageIcon;

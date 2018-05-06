@@ -1,3 +1,9 @@
+/**
+ * View part of MVC architecture for Mancala Project 
+ * @author Team Pineapple
+ * CS 151 Spring 2018
+ */
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,7 +30,7 @@ public class GameView implements ChangeListener
 		board = b;
 		pits = b.getPitList();
 		JFrame frame = new JFrame("CS 151 Team Pineapple Spring 2018");
-		frame.setSize(1000, 600);
+		frame.setSize(1000, 500);
 		JButton undoButton = new JButton("Undo");
 		undoButton.setPreferredSize(new Dimension(30,40));
 		undoButton.setBorder(new LineBorder(Color.red, 4));
