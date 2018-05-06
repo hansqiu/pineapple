@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -52,66 +51,9 @@ public class GameModel
 		}
 		notifyChangeListeners();
 	}
-        
 	
-        
-	public int getLastMarble(Pit pit) 
+	public void choosePit(Pit pit) 
 	{
-		int numberOfMarbles = pit.getNumOfStones();
-		int currentIndex = pit.getIndex();
-		while (numberOfMarbles > 0) {
-			if (currentIndex == 5 && currentPlayer == Player.B) {
-				currentIndex += 2;
-			} else if (currentIndex == 12 && currentPlayer == Player.A) {
-				currentIndex += 2;
-			} else {
-				currentIndex++;
-			}
-			if (currentIndex == 14) {
-				currentIndex = 0;
-			}
-			numberOfMarbles--;
-		}
-		return currentIndex;
-	}
-
-	public void distributeStones(int startIndex, int marbles) {
-		int numberOfMarbles = marbles;
-		int currentIndex = startIndex;
-
-		while (numberOfMarbles > 0) {
-			if (currentIndex == 5 && currentPlayer == Player.B) {
-				currentIndex += 2;
-			} else if (currentIndex == 12 && currentPlayer == Player.A) {
-				currentIndex = 0;
-			} else {
-				currentIndex++;
-			}
-			if (currentIndex == 14) {
-				currentIndex = 0;
-			}
-			pitList.get(currentIndex).setNumOfStones(pitList.get(currentIndex).getNumOfStones() + 1);
-			numberOfMarbles--;
-		}
-	}
-
-	private void wonOpponentMarbles(int lastMarbleDropped) {
-		int mancala = 6;
-		if(lastMarbleDropped == 6 || lastMarbleDropped == 13) return;
-		else if (pitList.get(lastMarbleDropped).getNumOfStones() == 1 && pitList.get(lastMarbleDropped).getPlayer() == currentPlayer) 
-		{
-			if(pitList.get(12-lastMarbleDropped).getNumOfStones()==0)return;
-			if(currentPlayer==Player.A)mancala=6;
-			else mancala=13;
-
-			pitList.get(mancala).setNumOfStones(pitList.get(mancala).getNumOfStones() + pitList.get(12 - lastMarbleDropped).getNumOfStones());
-			pitList.get(mancala).setNumOfStones(pitList.get(mancala).getNumOfStones() + pitList.get(lastMarbleDropped).getNumOfStones());
-			pitList.get(12 - lastMarbleDropped).setNumOfStones(0);
-			pitList.get(lastMarbleDropped).setNumOfStones(0);
-		} 
-	}
-
-	public void choosePit(Pit pit) {
 		if(!canUndo)
 			numOfUndo=0;
 		if(pit.getPlayer() != currentPlayer)
@@ -123,12 +65,12 @@ public class GameModel
 		}
 
 		extraTurn = getExtraTurn(pit);
-		int lastMarbleDropped = getLastMarble(pit);
-		int numberOfMarbles = pit.getNumOfStones();
+		int lastStoneDropped = getLastStone(pit);
+		int numberOfStones = pit.getNumOfStones();
 		pit.setNumOfStones(0);
 
-		distributeStones(pit.getIndex(), numberOfMarbles);
-		wonOpponentMarbles(lastMarbleDropped);
+		distributeStones(pit.getIndex(), numberOfStones);
+		wonOpponentStones(lastStoneDropped);
 		if (gameIsOver()) 
 			clearBoard();
 		if (!extraTurn) {
@@ -137,7 +79,57 @@ public class GameModel
 		canUndo = false;
 		notifyChangeListeners();
 	}
+	
+	public void distributeStones(int startIndex, int stones) 
+	{
+		int numberOfStones = stones;
+		int currentIndex = startIndex;
+
+		while (numberOfStones > 0) {
+			if (currentIndex == 5 && currentPlayer == Player.B) 
+			{
+				currentIndex += 2;
+			} else if (currentIndex == 12 && currentPlayer == Player.A) 
+			{
+				currentIndex = 0;
+			} else {
+				currentIndex++;
+			}
+			if (currentIndex == 14) 
+			{
+				currentIndex = 0;
+			}
+			pitList.get(currentIndex).setNumOfStones(pitList.get(currentIndex).getNumOfStones() + 1);
+			numberOfStones--;
+		}
+	}
         
+	public int getLastStone(Pit pit) 
+	{
+		int numberOfStones = pit.getNumOfStones();
+		int currentIndex = pit.getIndex();
+		while (numberOfStones > 0) 
+		{
+			if (currentIndex == 5 && currentPlayer == Player.B) 
+			{
+				currentIndex += 2;
+			} else if (currentIndex == 12 && currentPlayer == Player.A) 
+			{
+				currentIndex += 2;
+			} else 
+			{
+				currentIndex++;
+			}
+			
+			if (currentIndex == 14) 
+			{
+				currentIndex = 0;
+			}
+			numberOfStones--;
+		}
+		return currentIndex;
+	}
+    
 	private boolean getExtraTurn(Pit pit) {
 		int totalMoves = pit.getIndex() + pit.getNumOfStones();
 		if ((totalMoves - 6) % 13 == 0 && currentPlayer == Player.A) 
@@ -150,6 +142,23 @@ public class GameModel
 		return false;
 	}
         
+	private void wonOpponentStones(int lastStoneDropped) 
+	{
+		int mancala = 6;
+		if(lastStoneDropped == 6 || lastStoneDropped == 13) return;
+		else if (pitList.get(lastStoneDropped).getNumOfStones() == 1 && pitList.get(lastStoneDropped).getPlayer() == currentPlayer) 
+		{
+			if(pitList.get(12-lastStoneDropped).getNumOfStones()==0)return;
+			if(currentPlayer==Player.A)mancala=6;
+			else mancala=13;
+
+			pitList.get(mancala).setNumOfStones(pitList.get(mancala).getNumOfStones() + pitList.get(12 - lastStoneDropped).getNumOfStones());
+			pitList.get(mancala).setNumOfStones(pitList.get(mancala).getNumOfStones() + pitList.get(lastStoneDropped).getNumOfStones());
+			pitList.get(12 - lastStoneDropped).setNumOfStones(0);
+			pitList.get(lastStoneDropped).setNumOfStones(0);
+		} 
+	}
+	
 	public boolean gameIsOver() 
 	{
 		boolean emptyRow = true;

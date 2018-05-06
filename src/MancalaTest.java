@@ -2,8 +2,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
 import java.awt.GridLayout;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public class MancalaTest
 {
@@ -21,13 +23,25 @@ public class MancalaTest
 
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(2,2,2,2));
+		
+		Border raisedBevel = BorderFactory.createRaisedBevelBorder();
+		Border loweredBevel = BorderFactory.createLoweredBevelBorder();
+		Border compoundOne = BorderFactory.createCompoundBorder(raisedBevel, loweredBevel);
 
 		threeWood = new JButton("Wood Theme with 3 stones");
+		threeWood.setBorder(compoundOne);
+		threeWood.setBackground(Color.yellow);
 		fourWood = new JButton("Wood Theme with 4 stones");
-
-
+		fourWood.setBorder(compoundOne);
+		fourWood.setBackground(Color.yellow);
+		
+		Border compoundTwo = BorderFactory.createCompoundBorder(loweredBevel, raisedBevel);
 		threeGalaxy = new JButton("Galaxy Theme with 3 stones");
+		threeGalaxy.setBorder(compoundTwo);
+		threeGalaxy.setBackground(Color.DARK_GRAY);
 		fourGalaxy = new JButton("Galaxy Theme with 4 stones");
+		fourGalaxy.setBorder(compoundTwo);
+		fourGalaxy.setBackground(Color.DARK_GRAY);
 
 		mainPanel.add(threeWood);
 		mainPanel.add(fourWood);
@@ -51,53 +65,50 @@ public class MancalaTest
 		public void actionPerformed (ActionEvent e)
 		{
 			mainFrame.setVisible(false);
-			ForestStyle wl = new ForestStyle();
-			GalaxyStyle gl = new GalaxyStyle();
+			ForestStyle forest = new ForestStyle();
+			GalaxyStyle galaxy = new GalaxyStyle();
+			
 			threeWood.addMouseListener(new MouseAdapter() 
 			{
-				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
-					GameModel b = new GameModel(wl);
-					BoardView bV=new BoardView(b);
-					b.attach(bV);
+					super.mouseClicked(e); 
+					GameModel b = new GameModel(forest);
+					GameView gameView = new GameView(b);
+					b.attach(gameView);
 					b.initialize(3);
 				};
 			});
 			fourWood.addMouseListener(new MouseAdapter() 
 			{
-				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
-					GameModel b = new GameModel(wl);
-					BoardView bV=new BoardView(b);
-					b.attach(bV);
+					super.mouseClicked(e); 
+					GameModel b = new GameModel(forest);
+					GameView gameView = new GameView(b);
+					b.attach(gameView);
 					b.initialize(4);
 				};
 			});
 			threeGalaxy.addMouseListener(new MouseAdapter() 
 			{
-				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
-					GameModel b = new GameModel(gl);
-					BoardView bV=new BoardView(b);
-					b.attach(bV);
+					super.mouseClicked(e);
+					GameModel b = new GameModel(galaxy);
+					GameView gameView = new GameView(b);
+					b.attach(gameView);
 					b.initialize(3);
 				};
 			});
 			fourGalaxy.addMouseListener(new MouseAdapter() 
 			{
-				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
-					GameModel b = new GameModel(gl);
-					BoardView bV=new BoardView(b);
-					b.attach(bV);
+					super.mouseClicked(e); 
+					GameModel b = new GameModel(galaxy);
+					GameView gameView = new GameView(b);
+					b.attach(gameView);
 					b.initialize(4);
 				};
 			});
