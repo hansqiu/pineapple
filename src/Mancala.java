@@ -49,6 +49,13 @@ public class Mancala extends Pit
     public void paintComponent(Graphics g) 
     {   
 		ImageIcon i = new ImageIcon(this.getPitImagePath(layout));
-		i.paintIcon(this, g, 10, 80);
+		i.paintIcon(this, g, 10, 60);
+		ImageIcon j = new ImageIcon(this.getStoneImagePath(layout));
+		int height = 60;
+		for(int k = 0; k < numOfStone; k++)
+		{
+			j.paintIcon(this, g, 10, height);
+			height = height + 15;
+		}
     }
 }
