@@ -7,7 +7,7 @@
 public class ForestStyle implements GameStyle 
 {
 	/**
-	 * To return a path of a stone image for Wood Theme
+	 * To return a path of a stone image for Forest Theme
 	 */
 	public String getStonePic() 
 	{
@@ -15,7 +15,7 @@ public class ForestStyle implements GameStyle
 	}
 
 	/**
-	 * To return a path of a pit image for Wood Theme
+	 * To return a path of a pit image for Forest Theme
 	 */
 	public String getPitPic() 
 	{
@@ -23,7 +23,7 @@ public class ForestStyle implements GameStyle
 	}
 
 	/**
-	 * To return a path of a mancala image for Wood Theme
+	 * To return a path of a mancala image for Forest Theme
 	 */
 	public String getMancalaPic(Player p) 
 	{
