@@ -25,6 +25,11 @@ public class GameView implements ChangeListener
 	private ArrayList<Pit> pits;
 	final JTextField playerTurn;
 	
+	/**
+	* Draws the frame of the mancala game, with undo button, colors, pits
+	* and adds the actionlistener to the board
+	* @param b is the gameboard that holds the game info
+	*/
 	public GameView(GameModel b) 
 	{
 		board = b;
@@ -36,6 +41,10 @@ public class GameView implements ChangeListener
 		undoButton.setBorder(new LineBorder(Color.red, 4));
 		undoButton.addActionListener(new ActionListener() 
 		{
+			/**
+			* @param e is the event being performed
+			* performs the undo when the button is clicked
+			*/
 			public void actionPerformed(ActionEvent e) 
 			{
 				board.undo();
@@ -55,6 +64,10 @@ public class GameView implements ChangeListener
 			pitGrid.add(lowerPit);
 			upperPit.addMouseListener(new MouseAdapter() 
 			{
+				/**
+				* @param e is the mouse event
+				* this checks if the mouse clicks on the pits of player B
+				*/
 				public void mouseClicked(MouseEvent e) 
 				{
 					super.mouseClicked(e); 
@@ -63,6 +76,10 @@ public class GameView implements ChangeListener
 			});
 			lowerPit.addMouseListener(new MouseAdapter() 
 			{
+				/**
+				* @param e is sthe mouse event
+				* checks if mouse clicks on pits of player A
+				*/
 				public void mouseClicked(MouseEvent e) 
 				{
 					super.mouseClicked(e); 
@@ -84,6 +101,10 @@ public class GameView implements ChangeListener
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	/**
+	* @param e is the change event
+	* shows the changed state in the player turn, the number of stones in each pit, and the end result of the game
+	*/
 	public void stateChanged(ChangeEvent e) 
 	{
 		pits=board.getPitList();
