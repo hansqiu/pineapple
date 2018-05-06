@@ -10,18 +10,18 @@ import javax.swing.event.ChangeListener;
 
 public class GameModel 
 {
-
 	private Player currentPlayer;
-	private ArrayList<Pit> pitList; 		
+	private ArrayList<Pit> pitList; 
+	private ArrayList<ChangeListener> listeners;
 	private boolean extraTurn;	
 	private boolean canUndo;
 	private int numOfUndo;
 	private int[] previousNumOfStone;
-	private ArrayList<ChangeListener> listeners;
 
 	/*
-	 * Constructor of GameModel Object
+	 * Constructor of GameModel Object that initializes the instance variables that will be used throughout the program
 	 * GameModel object will use a GameStyle object which will have the info about the style users have chosen as an input.
+	 * @param theGameStyle the style of the game that will be used throughout the mancala game
 	 */
     public GameModel(GameStyle theGameStyle) 
     {
@@ -49,6 +49,7 @@ public class GameModel
         
     /*
      * To initialize pits with the chosen number of stones
+     * @param stones is the number of stones that will first occupy each pit
      */
 	public void initialize(int stones) 
 	{
@@ -69,6 +70,10 @@ public class GameModel
 		notifyChangeListeners();
 	}
 	
+	/**
+	* Finds the pit that the player chooese for their turn 
+	* @param pit where the players turn will start
+	*/
 	public void choosePit(Pit pit) 
 	{
 		if(!canUndo)
@@ -103,6 +108,11 @@ public class GameModel
 		notifyChangeListeners();
 	}
 	
+	/**
+	* Moves the stones into each next pit, decrementing by one with each step,skipping the opponents mancala
+	* @param startIndex is the pit where the players turn starts
+	* @param stones is the number of stones in the pit
+	*/
 	public void distributeStones(int startIndex, int stones) 
 	{
 		int numberOfStones = stones;
@@ -129,7 +139,11 @@ public class GameModel
 			numberOfStones--;
 		}
 	}
-        
+        /**
+	* Gets the last stone from the turn
+	* @param pit is the pit where the last stone is placed
+	* @return currentIndex is the index where the last stone is put
+	*/
 	public int getLastStone(Pit pit) 
 	{
 		int numberOfStones = pit.getNumOfStones();
@@ -156,6 +170,10 @@ public class GameModel
 		return currentIndex;
 	}
     
+	/**
+	* Checks the pit where the last stone is placed in a turn, if it's in the own mancala, get an extra turn
+	* @param pit is the ending pit of a turn
+	*/
 	private boolean getExtraTurn(Pit pit) {
 		int totalMoves = pit.getIndex() + pit.getNumOfStones();
 		if ((totalMoves - 6) % 13 == 0 && currentPlayer == Player.A) 
@@ -168,6 +186,10 @@ public class GameModel
 		return false;
 	}
         
+	/**
+	* Checks if the last stone dropped is in an empty pit on players own side, with stones in the opposing pit
+	* @param lastStoneDropped is the index of the last stone dropped in a turn
+	*/
 	private void wonOpponentStones(int lastStoneDropped) 
 	{
 		int mancala = 6;
@@ -185,6 +207,10 @@ public class GameModel
 		} 
 	}
 	
+	/**
+	* Checks if the game is over by checking if there are any empty rows on the board
+	* @return emptyRow is a boolean that returns false if there are no empty rows
+	*/
 	public boolean gameIsOver() 
 	{
 		boolean emptyRow = true;
@@ -209,12 +235,19 @@ public class GameModel
 		return emptyRow;
 	}
 	
-
+	/**
+	* Gets the arraylist with the pits
+	* @return pitList is the list of pits in the game
+	*/
 	public ArrayList<Pit> getPitList() 
 	{
 		return pitList;
 	}
 
+	/**
+	* Gets the mancala of the player whose turn it is
+	* @param player is the player whose turn it is
+	*/
 	public Mancala getMancala(Player player) 
 	{
 		for (Pit p : pitList) 
@@ -227,6 +260,9 @@ public class GameModel
 		return null;
 	}
 	
+	/**
+	* Switches the players turn every time there is no extra turn
+	*/
 	private void switchPlayer() 
 	{
 		if (currentPlayer == Player.A) 
@@ -239,6 +275,9 @@ public class GameModel
 		extraTurn = false;
 	}
 
+	/**
+	* checks if it's the first turn to check if there is an undo available
+	*/
 	private boolean noPreviousState()
 	{
 		for(Pit p: pitList)
@@ -247,6 +286,9 @@ public class GameModel
 		return true;
 	}
        
+	/**
+	* Restores the previous state if undo is allowed
+	*/
 	public void undo() 
 	{
 
@@ -268,7 +310,10 @@ public class GameModel
 		notifyChangeListeners();
 	}
 
-	 
+	 /**
+	 * Checks if player is able to undo by checking if it's the first turn, if they've used all of their undos for the game, or 
+	 * if the game is over -- let's player know if they can't
+	 */
 	private boolean canUndo()
 	{
 		if(noPreviousState())
@@ -288,6 +333,9 @@ public class GameModel
 		}
 	}
 	
+	/**
+	* Used to notify the change listeners
+	*/
 	public void notifyChangeListeners()
 	{
 		for (int i = 0; i < listeners.size(); i++)
@@ -296,22 +344,37 @@ public class GameModel
 		}
 	}
 	
+	/**
+	* attaches change listener
+	* @param is the listener is attached to the arraylist of changelisteners
+	*/
 	public void attach(ChangeListener listener) 
 	{
 		listeners.add(listener);
 	}
         
+	/**
+	* Gets the current player
+	* @return currentPlayer is the current turn
+	*/
 	public Player getPlayer() 
 	{
 		return currentPlayer;
 	}
      
+	/**
+	* Checks if the game is over
+	* @return the result from the gameIsOver method
+	*/
 	public boolean getGameStatus() 
 	{
 
 		return gameIsOver();
 	}
 
+	/**
+	* Clears the board when the game is over
+	*/
 	private void clearBoard()
 	{
 		for (int i = 0; i < 6; i++) 
