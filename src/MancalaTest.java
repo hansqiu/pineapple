@@ -43,10 +43,10 @@ public class MancalaTest
 		Border compoundTwo = BorderFactory.createCompoundBorder(loweredBevel, raisedBevel);
 		threeGalaxy = new JButton("Galaxy Theme with 3 stones");
 		threeGalaxy.setBorder(compoundTwo);
-		threeGalaxy.setBackground(Color.DARK_GRAY);
+		threeGalaxy.setBackground(Color.LIGHT_GRAY);
 		fourGalaxy = new JButton("Galaxy Theme with 4 stones");
 		fourGalaxy.setBorder(compoundTwo);
-		fourGalaxy.setBackground(Color.DARK_GRAY);
+		fourGalaxy.setBackground(Color.LIGHT_GRAY);
 
 		mainPanel.add(threeWood);
 		mainPanel.add(fourWood);

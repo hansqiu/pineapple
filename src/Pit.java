@@ -68,17 +68,15 @@ public class Pit extends JComponent
 	
 	public void paintComponent(Graphics g)
 	{
-        super.paintComponent(g);
+		super.paintComponent(g);
 		ImageIcon i = new ImageIcon(this.getPitImagePath(layout));
 		i.paintIcon(this, g, 10, 10);
 		ImageIcon j = new ImageIcon(this.getStoneImagePath(layout));
-		int width, height;
-		Random random = new Random();
+		int height = -30;
 		for(int k = 0; k < numOfStone; k++)
 		{
-			width =  random.nextInt(i.getIconWidth()/3);
-			height =  random.nextInt(i.getIconHeight()/3);
-			j.paintIcon(this, g, width, height);
+			j.paintIcon(this, g, 10, height);
+			height = height + 15;
 		}
 	
 	}
