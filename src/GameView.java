@@ -29,7 +29,7 @@ public class GameView implements ChangeListener
 	{
 		board = b;
 		pits = b.getPitList();
-		JFrame frame = new JFrame("CS 151 Team Pineapple Spring 2018");
+		JFrame frame = new JFrame("CS 151 Team Pineapple Spring 2018 Mancala Game");
 		frame.setSize(1000, 500);
 		JButton undoButton = new JButton("Undo");
 		undoButton.setPreferredSize(new Dimension(30,40));
@@ -43,10 +43,12 @@ public class GameView implements ChangeListener
 		});
 		
 		final  JPanel panel = new JPanel(new GridLayout(0,8));
+		panel.setBackground(Color.GREEN);
 		panel.add(b.getMancala(Player.B));
 		for(int i=0; i<6; i++)
 		{
 			JPanel pitGrid = new JPanel(new GridLayout(2,0));
+			pitGrid.setBackground(Color.PINK);
 			final Pit upperPit = pits.get(12-i);
 			final Pit lowerPit = pits.get(i);
 			pitGrid.add(upperPit);
